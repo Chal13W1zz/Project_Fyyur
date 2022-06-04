@@ -14,6 +14,7 @@ from flask_wtf import Form
 from forms import *
 import os 
 import sys
+import datetime
 from flask_migrate import Migrate
 #----------------------------------------------------------------------------#
 # App Config.
@@ -112,29 +113,47 @@ def index():
 
 @app.route('/venues')
 def venues():
+  data = []
+  curr_time = datetime.datetime.now().strftime('%Y-%d-%m %H:%M:%S')
+  venues = Venue.query.all()
+  
+  for venue in venues:
+    data.append({
+      "city": venue.city,
+      "state": venue.state,
+      "venues": [{
+        "id": venue.id,
+        "name": venue.name,
+        "num_upcoming_shows": db.session.query(Show).filter(Show.start_time<curr_time).count()
+
+      }]
+      
+    })
+    
   # TODO: replace with real venues data.
   #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
-    }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
-    }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
+  
+  # data1=[{
+  #   "city": "San Francisco",
+  #   "state": "CA",
+  #   "venues": [{
+  #     "id": 1,
+  #     "name": "The Musical Hop",
+  #     "num_upcoming_shows": 0,
+  #   }, {
+  #     "id": 3,
+  #     "name": "Park Square Live Music & Coffee",
+  #     "num_upcoming_shows": 1,
+  #   }]
+  # }, {
+  #   "city": "New York",
+  #   "state": "NY",
+  #   "venues": [{
+  #     "id": 2,
+  #     "name": "The Dueling Pianos Bar",
+  #     "num_upcoming_shows": 0,
+  #   }]
+  # }]
   return render_template('pages/venues.html', areas=data);
 
 @app.route('/venues/search', methods=['POST'])
@@ -414,7 +433,40 @@ def show_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
   form = ArtistForm()
-  artist={
+  
+    # called upon submitting the new artist listing form
+  name = request.form["name"]
+  city = request.form["city"]
+  state = request.form["state"]
+  phone = request.form["phone"]
+  genres = request.form["genres"]
+  facebook_link = request.form["facebook_link"]
+  image_link = request.form["image_link"]
+  website_link = request.form["website_link"]
+  looking_for_venues = request.form.get("seeking_venue")
+  seeking_description = request.form["seeking_description"]
+    
+  if looking_for_venues != None:
+    looking_for_venues = True
+  else:
+    looking_for_venues = False
+    
+    #get the artist to update from the db
+  artist = Artist.query.get(artist_id)
+    
+      
+  artist.name = name
+  artist.city = city
+  artist.state = state
+  artist.phone = phone
+  artist.genres = genres
+  artist.facebook_link = facebook_link
+  artist.image_link = image_link
+  artist.website_link = website_link
+  artist.looking_for_venues = looking_for_venues
+  artist.seeking_description = seeking_description
+  
+  artist1={
     "id": 4,
     "name": "Guns N Petals",
     "genres": ["Rock n Roll"],
