@@ -13,6 +13,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 import os 
+import sys
 from flask_migrate import Migrate
 #----------------------------------------------------------------------------#
 # App Config.
@@ -46,6 +47,12 @@ class Venue(db.Model):
     looking_for_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String())
     shows = db.relationship('Show',backref='Venue',lazy=True)
+       
+    def __repr__(self):
+      return f'<Venue ID: {self.id}, Name: {self.name}, City: {self.city}, State: {self.state}, Address: {self.address}, Phone: {self.phone}, Genres: {self.genres}, FB: {self.facebook_link}, IMG: {self.image_link}, Web: {self.website_link}, TSeek: {self.looking_for_talent}, Desc: {self.seeking_description} >'
+    
+
+
     
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
@@ -238,14 +245,49 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-  # TODO: insert form data as a new Venue record in the db, instead
+  
+  error = False
+  
+  #fetch data from the form
+  name = request.form["name"]
+  city = request.form["city"]
+  state = request.form["state"]
+  address = request.form["address"]
+  phone = request.form["phone"]
+  genres = request.form["genres"]
+  facebook_link = request.form["facebook_link"]
+  image_link = request.form["image_link"]
+  website_link = request.form["website_link"]
+  looking_for_talent = request.form["seeking_talent"]
+  seeking_description = request.form["seeking_description"]
+      
+  if looking_for_talent == 'y':
+    looking_for_talent = True
+  else:
+    looking_for_talent = False
+  
+  data = Venue(name=name, city=city, state=state, address=address, phone=phone, genres=genres, facebook_link=facebook_link, image_link=image_link, website_link=website_link, looking_for_talent=looking_for_talent, seeking_description=seeking_description)
   # TODO: modify data to be the data object returned from db insertion
-
-  # on successful db insert, flash success
-  flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-  # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+  
+  try:
+    #save the venue to the database
+      db.session.add(data)
+      db.session.commit()
+      # TODO: insert form data as a new Venue record in the db, instead
+      # print("name: "+name+"\ncity: "+city+"\nstate: "+state+"\n address: "+address+"\n phone: "+phone+"\ngenres: "+genres+"\n fb_link: "+facebook_link+"\nimage: "+image_link+website_link+"\ntalent: "+str(looking_for_talent+"\n desc: "+seeking_description)
+            
+      flash('Venue ' + data.name + ' was successfully listed!')    
+      # on successful db insert, flash success  
+  except:
+    db.session.rollback()
+    error=True
+    print(sys.exc_info())
+    flash('An error occurred. Venue ' + data.name + ' could not be listed.')
+      # TODO: on unsuccessful db insert, flash an error instead.
+    
+  finally:
+    db.session.close()
+ 
   return render_template('pages/home.html')
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -535,6 +577,7 @@ if not app.debug:
 # Or specify port manually:
 
 if __name__ == '__main__':
+    app.run(debug=True)
     port = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=port)
 
