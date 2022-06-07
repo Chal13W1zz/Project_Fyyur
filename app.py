@@ -73,6 +73,10 @@ class Artist(db.Model):
     looking_for_venues = db.Column(db.Boolean)
     seeking_description = db.Column(db.String())
     shows = db.relationship('Show',backref='Artist',lazy=True)
+    
+    def __repr__(self):
+      return f'<Artist ID: {self.id}, Name: {self.name}, City: {self.city}, State: {self.state}, Address: {self.address}, Phone: {self.phone}, Genres: {self.genres}, FB: {self.facebook_link}, IMG: {self.image_link}, Web: {self.website_link}, TSeek: {self.looking_for_venues}, Desc: {self.seeking_description} >'
+
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
     
@@ -368,6 +372,15 @@ def show_artist(artist_id):
 def edit_artist(artist_id):
   form = ArtistForm()
   
+  #get the artist to update from the db
+  artist = Artist.query.get(artist_id)
+    
+  # TODO: populate form with fields from artist with ID <artist_id>
+  return render_template('forms/edit_artist.html', form=form, artist=artist)
+
+@app.route('/artists/<int:artist_id>/edit', methods=['POST'])
+def edit_artist_submission(artist_id):
+  
   # called upon submitting the new artist listing form
   name = request.form["name"]
   city = request.form["city"]
@@ -387,24 +400,29 @@ def edit_artist(artist_id):
     
   #get the artist to update from the db
   artist = Artist.query.get(artist_id)
+  
+  try:
+    artist.name = name
+    artist.city = city
+    artist.state = state
+    artist.phone = phone
+    artist.genres = genres
+    artist.facebook_link = facebook_link
+    artist.image_link = image_link
+    artist.website_link = website_link
+    artist.looking_for_venues = looking_for_venues
+    artist.seeking_description = seeking_description
     
-  artist.name = name
-  artist.city = city
-  artist.state = state
-  artist.phone = phone
-  artist.genres = genres
-  artist.facebook_link = facebook_link
-  artist.image_link = image_link
-  artist.website_link = website_link
-  artist.looking_for_venues = looking_for_venues
-  artist.seeking_description = seeking_description
-  # TODO: populate form with fields from artist with ID <artist_id>
-  return render_template('forms/edit_artist.html', form=form, artist=artist)
-
-@app.route('/artists/<int:artist_id>/edit', methods=['POST'])
-def edit_artist_submission(artist_id):
-  # TODO: take values from the form submitted, and update existing
-  # artist record with ID <artist_id> using the new attributes
+    db.session.commit()
+    flash('Artist ' + artist.name + ' updated successfully!') 
+    # TODO: take values from the form submitted, and update existing
+    # artist record with ID <artist_id> using the new attributes
+  except:
+    db.session.rollback()
+    print(sys.exc_info())
+    flash('Something went wrong, artist update failed!')  
+  finally:
+    db.session.close()
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
