@@ -504,9 +504,13 @@ def create_artist_submission():
 @app.route('/shows')
 def shows():
   # displays list of shows at /shows
-  # TODO: replace with real venues data.
+  # DONE: replace with real venues data.
   data = db.session.query(Venue.id, Venue.name, Artist.id, Artist.name, Artist.image_link, Show.start_time).all()
   return render_template('pages/shows.html', shows=data)
+
+@app.route('/shows/find')
+def shows_search():
+  return render_template('pages/show.html')
 
 @app.route('/shows/create')
 def create_shows():
