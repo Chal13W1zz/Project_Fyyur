@@ -23,7 +23,6 @@ from forms import *
 import os 
 import sys
 import datetime
-
 #from config import *
 from models import app, db, Venue, Artist, Show
 
@@ -181,6 +180,7 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
+  form = VenueForm(request.form)
 
   #fetch data from the form
   name = request.form["name"]
@@ -204,6 +204,7 @@ def create_venue_submission():
   # DONE: modify data to be the data object returned from db insertion
   
   try:
+      form.populate_obj(data)
     #save the venue to the database
       db.session.add(data)
       db.session.commit()
@@ -357,6 +358,7 @@ def edit_artist(artist_id):
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
+  form = ArtistForm(request.form)
   
   # called upon submitting the new artist listing form
   name = request.form["name"]
@@ -389,6 +391,7 @@ def edit_artist_submission(artist_id):
     artist.website_link = website_link
     artist.looking_for_venues = looking_for_venues
     artist.seeking_description = seeking_description
+    form.populate_obj(artist)
     
     db.session.commit()
     flash('Artist ' + artist.name + ' updated successfully!') 
@@ -412,6 +415,7 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
+  form = VenueForm(request.form)
    #fetch data from the updated form
   name = request.form["name"]
   city = request.form["city"]
@@ -446,6 +450,7 @@ def edit_venue_submission(venue_id):
     venue.website_link = website_link
     venue.looking_for_talent = looking_for_talent
     venue.seeking_description = seeking_description
+    form.populate_obj(venue)
     
     db.session.commit()
     # DONE: take values from the form submitted, and update existing
@@ -470,7 +475,7 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-  
+  form = ArtistForm(request.form)
   # called upon submitting the new artist listing form
   name = request.form["name"]
   city = request.form["city"]
@@ -493,6 +498,7 @@ def create_artist_submission():
   # DONE: modify data to be the data object returned from db insertion
   # print("name: "+name+"\ncity: "+city+"\nstate: "+state+"\n phone: "+phone+"\ngenres: "+genres+"\n fb_link: "+facebook_link+"\nimage: "+image_link+website_link+"\nvenue: "+str(looking_for_venues)+"\n desc: "+seeking_description)
   try:
+    form.populate_obj(data)
     db.session.add(data)
     db.session.commit()
      # DONE: insert form data as a new Venue record in the db, instead
@@ -532,12 +538,13 @@ def create_shows():
 @app.route('/shows/create', methods=['POST'])
 # called to create new shows in the db, upon submitting new show listing form
 def create_show_submission():
+  form = ShowForm(request.form)
   artist_id = request.form["artist_id"]
   venue_id = request.form["venue_id"]
   start_time = request.form["start_time"]
   
   show = Show(artist_id=artist_id,venue_id=venue_id,start_time=start_time)
-  print("\nartist: "+artist_id+"\nvenue: "+venue_id+"\ntime: "+start_time)
+  # print("\nartist: "+artist_id+"\nvenue: "+venue_id+"\ntime: "+start_time)
   try:
     db.session.add(show)
     db.session.commit()
