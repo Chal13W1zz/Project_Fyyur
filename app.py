@@ -15,6 +15,7 @@ from flask import (
   url_for, 
   jsonify
   )
+from flask_migrate import Migrate
 from flask_moment import Moment
 import logging
 from logging import Formatter, FileHandler
@@ -152,7 +153,7 @@ def show_venue(venue_id):
     data_list.append({
         "id": venue.id,
         "name": venue.name,
-        "genres": venue.genres,
+        "genres": [venue.genres],
         "address": venue.address,
         "city": venue.city,
         "state": venue.state,
@@ -161,6 +162,7 @@ def show_venue(venue_id):
         "facebook_link": venue.facebook_link,
         "seeking_talent": venue.looking_for_talent,
         "image_link": venue.image_link,
+        "seeking_description": venue.seeking_description,
         "past_shows": past_shows,
         "upcoming_shows": upcoming_shows,
         "past_shows_count": len(past_shows),
@@ -327,13 +329,14 @@ def show_artist(artist_id):
     data_list.append({
       "id": artist.id,
       "name": artist.name,
-      "genres": artist.genres,
+      "genres": [artist.genres],
       "city": artist.city,
       "state": artist.state,
       "phone": artist.phone,
       "facebook_link": artist.facebook_link,
       "seeking_venue": artist.looking_for_venues,
       "image_link": artist.image_link,
+      "seeking_description": artist.seeking_description,
       "past_shows": past_shows,
       "upcoming_shows": upcoming_shows,
       "past_shows_count": len(past_shows),
