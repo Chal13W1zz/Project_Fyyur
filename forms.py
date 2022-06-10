@@ -11,6 +11,25 @@ from wtforms.validators import DataRequired, AnyOf, URL
 from validatephone import validate_phone
 from enums import Genre, State
 
+
+def validate(self):
+    """custom validate method:"""
+    rv = FlaskForm.validate(self)
+    if not rv:
+        return False
+    if not is_valid_phone(self.phone.data):
+        self.phone.errors.append('Invalid phone.')
+        return False
+    if not set(self.genres.data).issubset(dict(Genre.choices()).keys()):
+        self.genres.errors.append('Invalid genres.')
+        return False
+    if self.state.data not in dict(State.choices()).keys():
+        self.state.errors.append('Invalid state.')
+        return False
+    # if pass validation
+    return True
+
+
 state_choices = [
             ('AL', 'AL'),
             ('AK', 'AK'),
