@@ -25,15 +25,17 @@ import os
 import sys
 import datetime
 #from config import *
-from models import app, db, Venue, Artist, Show
+from models import db, Venue, Artist, Show
 
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
+app = Flask(__name__)
 app.config.from_object('config')
 moment = Moment(app)
 db.init_app(app)
+migrate = Migrate(app, db)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -153,7 +155,7 @@ def show_venue(venue_id):
     data_list.append({
         "id": venue.id,
         "name": venue.name,
-        "genres": [venue.genres],
+        "genres": venue.genres,
         "address": venue.address,
         "city": venue.city,
         "state": venue.state,
@@ -329,7 +331,7 @@ def show_artist(artist_id):
     data_list.append({
       "id": artist.id,
       "name": artist.name,
-      "genres": [artist.genres],
+      "genres": artist.genres,
       "city": artist.city,
       "state": artist.state,
       "phone": artist.phone,
@@ -602,6 +604,6 @@ if not app.debug:
 # Or specify port manually:
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8080))
+    port = int(os.environ.get('PORT', 9090))
     app.run(host='0.0.0.0', port=port)
 
