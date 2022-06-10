@@ -14,6 +14,7 @@ from forms import *
 import os 
 import sys
 import datetime
+#from config import *
 from models import app, db, Venue, Artist, Show
 
 #----------------------------------------------------------------------------#
@@ -542,6 +543,14 @@ def create_show_submission():
     db.session.close()
   
   return render_template('pages/home.html')
+
+@app.errorhandler(401)
+def server_error(error):
+    return render_template('errors/401.html'), 401
+  
+@app.errorhandler(403)
+def server_error(error):
+    return render_template('errors/403.html'), 403
 
 @app.errorhandler(404)
 def not_found_error(error):
