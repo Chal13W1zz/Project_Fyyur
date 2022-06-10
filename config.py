@@ -9,6 +9,6 @@ DEBUG = True
 # Connect to the database
 
 
-# TODO IMPLEMENT DATABASE URL
-SQLALCHEMY_DATABASE_URI = 'postgresql://ftm:123456@localhost:5432/fyyur'
+# DONE IMPLEMENT DATABASE URL
+SQLALCHEMY_DATABASE_URI = 'postgresql://chalie:123456@localhost:5432/fyyur' #create an new database, run migrations and replace the username, password and the newly created database name in the connection string
 SQLALCHEMY_TRACK_MODIFICATIONS = False
