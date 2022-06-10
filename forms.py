@@ -9,6 +9,7 @@ from wtforms import (
     )
 from wtforms.validators import DataRequired, AnyOf, URL
 from validatephone import validate_phone
+from enums import Genre, State
 
 state_choices = [
             ('AL', 'AL'),
