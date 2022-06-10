@@ -10,7 +10,7 @@ app = Flask(__name__)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# TODO: connect to a local postgresql database
+# DONE: connect to a local postgresql database
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -36,11 +36,7 @@ class Venue(db.Model):
     def __repr__(self):
       return f'<Venue ID: {self.id}, Name: {self.name}, City: {self.city}, State: {self.state}, Address: {self.address}, Phone: {self.phone}, Genres: {self.genres}, FB: {self.facebook_link}, IMG: {self.image_link}, Web: {self.website_link}, TSeek: {self.looking_for_talent}, Desc: {self.seeking_description} >'
     
-
-
-    
-
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    # DONE: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -60,9 +56,8 @@ class Artist(db.Model):
     
     def __repr__(self):
       return f'<Artist ID: {self.id}, Name: {self.name}, City: {self.city}, State: {self.state}, Address: {self.address}, Phone: {self.phone}, Genres: {self.genres}, FB: {self.facebook_link}, IMG: {self.image_link}, Web: {self.website_link}, TSeek: {self.looking_for_venues}, Desc: {self.seeking_description} >'
-
-
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    
+    # DONE: implement any missing fields, as a database migration using Flask-Migrate
     
 class Show(db.Model):
   __tablename__ = "Show"
@@ -71,4 +66,4 @@ class Show(db.Model):
   artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'),nullable=False)
   venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'),nullable=False)
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+# DONE Implement Show and Artist models, and complete all model relationships and properties, as a database migration.

@@ -84,7 +84,7 @@ class VenueForm(Form):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone'validators=[DataRequired()]
+        'phone', validators=[DataRequired()]
     )
     image_link = StringField(
         'image_link', validators=[URL(), DataRequired()]
@@ -235,6 +235,6 @@ class ArtistForm(Form):
     seeking_venue = BooleanField( 'seeking_venue' )
 
     seeking_description = StringField(
-            'seeking_description', validators= DataRequired()]
+            'seeking_description', validators= [DataRequired()]
      )
 
